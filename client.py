@@ -26,14 +26,20 @@ logging.basicConfig(
 # Завантаження змінних середовища
 load_dotenv()
 
-# Дані для автентифікації
+# Отримуємо змінні середовища
 API_ID = os.getenv('API_ID')
 API_HASH = os.getenv('API_HASH')
 PHONE = os.getenv('PHONE')
-BOT_TOKEN = os.getenv('TELEGRAM_TOKEN')
+BOT_TOKEN = os.getenv('BOT_TOKEN')
 
-# Ініціалізація клієнтів
+# Перевіряємо наявність всіх необхідних змінних
+if not all([API_ID, API_HASH, PHONE, BOT_TOKEN]):
+    raise ValueError("Missing required environment variables. Please check your .env file.")
+
+# Ініціалізація клієнта
 client = TelegramClient('anon', API_ID, API_HASH)
+
+# Ініціалізація бота
 bot = Bot(token=BOT_TOKEN)
 
 # Час очікування між повідомленнями (2 години)
