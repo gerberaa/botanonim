@@ -8,14 +8,16 @@ from aiogram.fsm.state import State, StatesGroup
 from aiogram.fsm.storage.memory import MemoryStorage
 import time
 import os
+from dotenv import load_dotenv
 
-TOKEN = "7652765366:AAGixSUFVlSR-5Pu2SmXPjW5cJZbsp9-uto"  # Встав сюди токен бота
+# Завантаження змінних середовища
+load_dotenv()
 
 # Налаштування логування
 logging.basicConfig(level=logging.INFO)
 
 # Ініціалізація бота та диспетчера
-bot = Bot(token=TOKEN)
+bot = Bot(token=os.getenv('BOT_TOKEN'))
 storage = MemoryStorage()
 dp = Dispatcher(storage=storage)
 
@@ -158,15 +160,4 @@ async def process_reply_count(callback: types.CallbackQuery, state: FSMContext):
         )
     )
     await state.clear()
-
-# Запуск бота
-async def main():
-    try:
-        await dp.start_polling(bot)
-    except Exception as e:
-        logging.error(f"Помилка в боті: {e}")
-        raise
-
-if __name__ == "__main__":
-    asyncio.run(main())
 

@@ -110,7 +110,11 @@ async def notify_user(user_id: str, message: str):
     """Відправляє повідомлення користувачу через бота"""
     try:
         logging.info(f"Спроба відправки повідомлення користувачу {user_id}")
-        await bot.send_message(chat_id=int(user_id), text=message)
+        await bot.send_message(
+            chat_id=int(user_id), 
+            text=message,
+            reply_markup=None  # Видаляємо reply_markup, оскільки він не потрібен для системних повідомлень
+        )
         logging.info(f"Повідомлення успішно відправлено користувачу {user_id}")
         return True
     except Exception as e:
