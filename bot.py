@@ -8,16 +8,14 @@ from aiogram.fsm.state import State, StatesGroup
 from aiogram.fsm.storage.memory import MemoryStorage
 import time
 import os
-from dotenv import load_dotenv
 
-# Завантаження змінних середовища
-load_dotenv()
+TOKEN = "7652765366:AAGixSUFVlSR-5Pu2SmXPjW5cJZbsp9-uto"  # Встав сюди токен бота
 
 # Налаштування логування
 logging.basicConfig(level=logging.INFO)
 
 # Ініціалізація бота та диспетчера
-bot = Bot(token=os.getenv('BOT_TOKEN'))
+bot = Bot(token=TOKEN)
 storage = MemoryStorage()
 dp = Dispatcher(storage=storage)
 
