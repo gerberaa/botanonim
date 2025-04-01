@@ -1,34 +1,48 @@
 import asyncio
 import logging
-from bot import main as bot_main
-from client import main as client_main
+from bot import dp, bot
+from client import client
+import os
 
 # Налаштування логування
+LOG_DIR = '/home/pilk/anonim_bot/logs'
+if not os.path.exists(LOG_DIR):
+    os.makedirs(LOG_DIR)
+
 logging.basicConfig(
     level=logging.INFO,
-    format='%(asctime)s - %(levelname)s - %(message)s'
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    handlers=[
+        logging.FileHandler(os.path.join(LOG_DIR, 'bot.log')),
+        logging.StreamHandler()
+    ]
 )
+logger = logging.getLogger(__name__)
 
 async def main():
     try:
-        # Створюємо завдання для бота та клієнта
-        bot_task = asyncio.create_task(bot_main())
-        client_task = asyncio.create_task(client_main())
+        logger.info("Starting bot...")
+        # Перевіряємо підключення до бота
+        bot_info = await bot.get_me()
+        logger.info(f"Bot connected successfully: @{bot_info.username}")
         
-        print("🚀 Запуск системи...")
-        print("🤖 Бот запущений")
-        print("👤 Клієнт запущений")
-        print("Для зупинки натисніть Ctrl+C")
+        # Перевіряємо підключення до клієнта
+        logger.info("Starting client...")
+        await client.start()
+        logger.info("Client started successfully")
         
-        # Чекаємо завершення обох завдань
-        await asyncio.gather(bot_task, client_task)
-        
-    except KeyboardInterrupt:
-        print("\n⚠️ Зупинка системи...")
+        # Запускаємо бота
+        logger.info("Starting polling...")
+        await dp.start_polling(bot)
     except Exception as e:
-        print(f"❌ Помилка: {e}")
-    finally:
-        print("👋 Система зупинена")
+        logger.error(f"Error in main: {e}", exc_info=True)
+        raise
 
 if __name__ == "__main__":
-    asyncio.run(main()) 
+    try:
+        logger.info("Script started")
+        asyncio.run(main())
+    except KeyboardInterrupt:
+        logger.info("Bot stopped by user")
+    except Exception as e:
+        logger.error(f"Fatal error: {e}", exc_info=True) 
